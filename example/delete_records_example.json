@@ -1,0 +1,24 @@
+[
+    {
+        "informasi": "Penghapusan record hanya butuh (id) saja. jadi data lain selain id boleh dihapus aja atau biarkan terisi data dari perintah ./dns get",
+        "id": "ini di isi otomatis ketika menjalankan perintah ./dns get",
+        "name": "biarkan terisi data dari perintah ./dns get",
+        "type": "biarkan terisi data dari perintah ./dns get",
+        "content": "biarkan terisi data dari perintah ./dns get",
+        "proxied": "biarkan terisi data dari perintah ./dns get",
+        "ttl": "biarkan terisi data dari perintah ./dns get",
+        "comment": "biarkan terisi data dari perintah ./dns get"
+    },
+    {
+        "id": "1234567890"
+    },
+    {
+        "id": "0987654321",
+        "name": "sub1",
+        "type": "A",
+        "content": "123.456.78.90",
+        "proxied": false,
+        "ttl": 1,
+        "comment": "DNS Manager Cli"
+    }
+]
