@@ -28,7 +28,7 @@ Script ini bisa dijalankan di lingkungan **Termux**, **Virtual Private Server (V
 Jalankan perintah berikut untuk mengunduh dan menginstal script:
 
 ```bash
-apt install curl jq -y && curl -L -o dns https://github.com/xenvoid404/manage-dns-cloudflare-cli/master/dns && chmod +x ./dns && ls
+apt install curl jq -y && curl -L -o dns https://raw.githubusercontent.com/xenvoid404/manage-dns-cloudflare-cli/refs/heads/master/dns && chmod +x ./dns && ls
 ```
 
 ## 3. Konfigurasi
