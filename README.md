@@ -1,11 +1,15 @@
-# 🌐 Management DNS Cloudflare CLI
+# Management DNS Cloudflare CLI
+
+<div align="center">
 
 [![Shell Script](https://img.shields.io/badge/Shell-Script-89e051?style=for-the-badge&logo=gnu-bash&logoColor=white)](https://github.com/xenvoid404/manage-dns-cloudflare-cli)
 [![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://cloudflare.com)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 [![Version](https://img.shields.io/badge/Version-1.0.0-green?style=for-the-badge)](https://github.com/xenvoid404/manage-dns-cloudflare-cli/releases)
 
-Script shell untuk mengelola DNS records Cloudflare melalui command line interface (CLI). Tool ini memungkinkan Anda untuk mengambil, membuat, memperbarui, dan menghapus DNS records dengan mudah menggunakan file JSON. 
+</div>
+
+Script shell untuk mengelola DNS records Cloudflare melalui command line interface (CLI). Tool ini memungkinkan Anda untuk mengambil, membuat, memperbarui, dan menghapus DNS records dengan mudah menggunakan file JSON.
 
 Script ini bisa dijalankan di lingkungan **Termux**, **Virtual Private Server (VPS)**, dan juga **Komputer**.
 
@@ -29,7 +33,16 @@ apt install curl jq -y && curl -L -o dns https://github.com/xenvoid404/manage-dn
 
 ## 3. Konfigurasi
 
-Setelah mengunduh script, Anda **WAJIB** mengatur konfigurasi Cloudflare dengan mengedit bagian berikut di dalam file script:
+Setelah mengunduh script, Anda **WAJIB** mengatur konfigurasi kredensial akun Cloudflare anda.
+
+1. Buka file dns yang baru saja diunduh dengan editor teks. (misalnya nano):
+
+```bash
+nano ./dns
+```
+
+2. Cari bagian Konfigurasi Awal di baris paling atas skrip.
+3. Ubah nilai variabel berikut dengan data Anda:
 
 ```bash
 # Konfigurasi Awal (WAJIB DIISI)
