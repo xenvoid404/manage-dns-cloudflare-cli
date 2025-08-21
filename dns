@@ -6,15 +6,15 @@
 # ==============================================================================
 
 # Konfigurasi Awal (WAJIB DIISI)
-CF_EMAIL="example@gmail.com" # Ganti dengan email yang terhubung dengan akun Cloudflare Anda
-CF_API_KEY="YOUR_CLOUDFLARE_API_KEY" # Ganti dengan Global API Key Cloudflare Anda.
+CF_EMAIL="example@gmail.com" # Ganti dengan email yang terhubung dengan akun Cloudflare
+CF_API_KEY="YOUR_GLOBAL_API_KEY" # Ganti dengan Global API Key Cloudflare.
 ZONE_ID="YOUR_ZONE_ID" # Ganti dengan Zone ID domain yang ingin Anda kelola
 
 # Variabel Global & Inisialisasi
 API_URL="https://api.cloudflare.com/client/v4"
 ACCOUNT_ID="" # Biarkan kosong, Ini akan diisi otomatis.
 ZONE_NAME="" # Biarkan kosong, Ini akan diisi otomatis.
-WORKER_NAME="temp-ssl-provisioner-$(date +%s)" # Nama worker unik untuk sesi ini
+WORKER_NAME="temp-ssl-provisioner-$(date +%s)" # Nama worker unik
 WORKER_SCRIPT_EXISTS=false
 
 # Warna untuk output log
@@ -124,22 +124,48 @@ trap cleanup EXIT
 # Fungsi untuk mengambil semua record DNS
 get_records() {
     echo -e "${YELLOW}Fetching DNS records for Zone ID: ${ZONE_ID}...${NC}"
-    local response
-    response=$(curl -s -X GET "${API_URL}/zones/${ZONE_ID}/dns_records" \
-        -H "X-Auth-Email: ${CF_EMAIL}" \
-        -H "X-Auth-Key: ${CF_API_KEY}" \
-        -H "Content-Type: application/json")
+    local page=1
+    local all_records="[]"
+
+    while :; do
+        echo -e "${CYAN}  Fetching page ${page}...${NC}"
+        local response
+        response=$(curl -s -X GET "${API_URL}/zones/${ZONE_ID}/dns_records?page=${page}&per_page=100" \
+            -H "X-Auth-Email: ${CF_EMAIL}" \
+            -H "X-Auth-Key: ${CF_API_KEY}" \
+            -H "Content-Type: application/json")
+
+        if [ "$(echo "$response" | jq -r .success)" != "true" ]; then
+            echo -e "${RED}Error fetching records on page ${page}:${NC}"
+            echo "$response" | jq .
+            exit 1
+        fi
+
+        local current_records
+        current_records=$(echo "$response" | jq '.result')
         
-    if [ "$(echo "$response" | jq -r .success)" == "true" ]; then
-        echo "$response" | jq '.result' > records.json
-        echo -e "${GREEN}Successfully fetched records. Output saved to records.json${NC}"
-    else
-        echo -e "${RED}Error fetching records:${NC}"
-        echo "$response" | jq .
-    fi
+        if [ "$(echo "$current_records" | jq 'length')" -eq 0 ]; then
+            break
+        fi
+
+        all_records=$(echo "$all_records" | jq --argjson new_records "$current_records" '. + $new_records')
+        
+        local total_pages
+        total_pages=$(echo "$response" | jq -r .result_info.total_pages)
+
+        if [ "$page" -ge "$total_pages" ]; then
+            break
+        fi
+
+        ((page++))
+    done
+
+    echo "$all_records" > records.json
+    echo -e "${GREEN}Successfully fetched all records. Output saved to records.json${NC}"
 }
 
-# Fungsi untuk menambah record DNS dari file dengan worker
+
+# Fungsi untuk menambah record DNS dari file
 create_records() {
     local file=$1
     
@@ -311,7 +337,7 @@ delete_records() {
 
 
 # Logika Utama
-install_deps # Install dependensi
+install_deps
 
 # Cek argumen yang diberikan
 if [ $# -eq 0 ]; then
